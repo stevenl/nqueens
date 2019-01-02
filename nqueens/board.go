@@ -25,8 +25,8 @@ type Board struct {
 	Queens       []position
 	unsafeRows   []bool
 	unsafeCols   []bool
-	unsafeDiagUp map[int]bool
-	unsafeDiagDn map[int]bool
+	unsafeDiagUp []bool
+	unsafeDiagDn []bool
 }
 
 // NewBoard creates a new, empty Board.
@@ -36,8 +36,8 @@ func NewBoard(n int) Board {
 		Queens:       make([]position, 0, n),
 		unsafeRows:   make([]bool, n),
 		unsafeCols:   make([]bool, n),
-		unsafeDiagUp: make(map[int]bool, n),
-		unsafeDiagDn: make(map[int]bool, n),
+		unsafeDiagUp: make([]bool, n*2),
+		unsafeDiagDn: make([]bool, n*2),
 	}
 	return b
 }
@@ -49,8 +49,8 @@ func (b Board) IsSafe(x, y int) bool {
 	switch {
 	case b.unsafeRows[y]:
 	case b.unsafeCols[x]:
-	case b.unsafeDiagUp[y-x]:
-	case b.unsafeDiagDn[y+x]:
+	case b.unsafeDiagUp[y - x + b.N]:
+	case b.unsafeDiagDn[y + x]:
 	default:
 		isSafe = true
 	}
@@ -61,8 +61,8 @@ func (b *Board) setQueen(q position) {
 	b.Queens = append(b.Queens, q)
 	b.unsafeRows[q.Y] = true
 	b.unsafeCols[q.X] = true
-	b.unsafeDiagUp[q.Y-q.X] = true
-	b.unsafeDiagDn[q.Y+q.X] = true
+	b.unsafeDiagUp[q.Y - q.X + b.N] = true
+	b.unsafeDiagDn[q.Y + q.X] = true
 }
 
 // SetQueen copyies the board and sets a queen at the given position.
