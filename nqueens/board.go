@@ -23,8 +23,8 @@ func (pp byY) Less(i, j int) bool { return pp[i].Y < pp[j].Y }
 type Board struct {
 	N            int
 	Queens       []position
-	unsafeRows   map[int]bool
-	unsafeCols   map[int]bool
+	unsafeRows   []bool
+	unsafeCols   []bool
 	unsafeDiagUp map[int]bool
 	unsafeDiagDn map[int]bool
 }
@@ -33,10 +33,11 @@ type Board struct {
 func NewBoard(n int) Board {
 	b := Board{
 		N:            n,
-		unsafeRows:   make(map[int]bool),
-		unsafeCols:   make(map[int]bool),
-		unsafeDiagUp: make(map[int]bool),
-		unsafeDiagDn: make(map[int]bool),
+		Queens:       make([]position, 0, n),
+		unsafeRows:   make([]bool, n),
+		unsafeCols:   make([]bool, n),
+		unsafeDiagUp: make(map[int]bool, n),
+		unsafeDiagDn: make(map[int]bool, n),
 	}
 	return b
 }
