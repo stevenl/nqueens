@@ -20,35 +20,69 @@ func Example() {
 	}
 }
 
-func TestSolutions(t *testing.T) {
-	var tests = []struct {
-		N                      int
-		NrAllSolutions         int
-		NrFundamentalSolutions int
-		NrSolutions            int
-	}{
-		{4, 2, 1, 1},
-		{8, 92, 12, 16},
+type Test struct {
+	N                      int
+	NrAllSolutions         int
+	NrFundamentalSolutions int
+}
+
+func TestGetAllSolutions(t *testing.T) {
+	var tests = []Test{
+		{4, 2, 1},
+		{8, 92, 12},
 	}
 
 	for _, test := range tests {
-		solutions := GetAllSolutions(NewBoard(test.N))
+		solutions := testGetAllSolutions(t, test)
+		testReduceToFundamentalSolutions(t, test, solutions)
+	}
+}
+
+func testGetAllSolutions(t *testing.T, test Test) []Board {
+	solutions := GetAllSolutions(NewBoard(test.N))
+	t.Logf("%d solutions for a %dx%d board\n", len(solutions), test.N, test.N)
+	logSolutions(t, solutions)
+
+	if nrSolutions := len(solutions); nrSolutions != test.NrAllSolutions {
+		t.Errorf("GetAllSolutions(%d) = %d, want %d", test.N, nrSolutions, test.NrAllSolutions)
+	}
+	return solutions
+}
+
+func testReduceToFundamentalSolutions(t *testing.T, test Test, allSolutions []Board) {
+	solutions := ReduceToFundamentalSolutions(allSolutions)
+	t.Logf("%d fundamental solutions for a %dx%d board\n", len(solutions), test.N, test.N)
+	logSolutions(t, solutions)
+
+	if nrSolutions := len(solutions); nrSolutions != test.NrFundamentalSolutions {
+		t.Errorf("ReduceToFundamentalSolutions(%d) = %d, want %d", test.N, nrSolutions, test.NrFundamentalSolutions)
+	}
+}
+
+func TestPresetBoards(t *testing.T) {
+	tests := []struct {
+		N             int
+		InitPositions []position
+		NrSolutions   int
+	}{
+		{4, []position{position{0, 2}}, 1},
+		{4, []position{position{3, 3}}, 0},
+		{8, []position{position{0, 2}}, 16},
+		{8, []position{position{0, 2}, position{5, 4}}, 2},
+		{8, []position{position{0, 2}, position{0, 0}}, 0},
+	}
+
+	for _, test := range tests {
+		b := NewBoard(test.N)
+		for _, p := range test.InitPositions {
+			b = b.SetQueen(p.X, p.Y)
+		}
+		solutions := GetAllSolutions(b)
+		t.Logf("%d solutions for a %dx%d board with initial positions set %s\n", len(solutions), test.N, test.N, b.Queens)
 		logSolutions(t, solutions)
 
-		if len := len(solutions); len != test.NrAllSolutions {
-			t.Errorf("GetAllSolutions(%d) = %d, want %d", test.N, len, test.NrAllSolutions)
-		}
-
-		solutions = ReduceToFundamentalSolutions(solutions)
-		if len := len(solutions); len != test.NrFundamentalSolutions {
-			t.Errorf("GetFundamentalSolutions(%d) = %d, want %d", test.N, len, test.NrFundamentalSolutions)
-		}
-
-		b := NewBoard(test.N).SetQueen(0, 2)
-		solutions = GetAllSolutions(b)
-		logSolutions(t, solutions)
-		if len := len(solutions); len != test.NrSolutions {
-			t.Errorf("GetSolutions(%d) = %d, want %d", test.N, len, test.NrSolutions)
+		if nrSolutions := len(solutions); nrSolutions != test.NrSolutions {
+			t.Errorf("PresetBoards(%d%s) = %d, want %d", test.N, test.InitPositions, nrSolutions, test.NrSolutions)
 		}
 	}
 }

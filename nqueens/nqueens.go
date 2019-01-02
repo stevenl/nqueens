@@ -13,8 +13,17 @@ package nqueens
 //	}
 //}
 
-// GetAllSolutions finds all of the distinct solutions for an NxN board.
+// GetAllSolutions finds all of the distinct solutions for the given board.
+// If the board is empty then it will return all possible solutions for that
+// board size.
+// If the board is preset with starting queens then it will return  only the
+// solutions that include those positions being occupied.
+// If the given board is preset with queens that already threaten each
+// other then no solutions will be returned.
 func GetAllSolutions(start Board) []Board {
+	if !start.isValid() {
+		return make([]Board, 0)
+	}
 	return start.getAllSolutions()
 }
 
@@ -35,11 +44,10 @@ func (b Board) getAllSolutions() []Board {
 		return allSolutions
 	}
 
+	// Recursively find the columns that are possible for a solution
 	for x := 0; x < b.N; x++ {
 		if b.IsSafe(x, y) {
 			b1 := b.SetQueen(x, y)
-
-			// Recurse
 			solutions := b1.getAllSolutions()
 			allSolutions = append(allSolutions, solutions...)
 		}
@@ -48,7 +56,8 @@ func (b Board) getAllSolutions() []Board {
 }
 
 // ReduceToFundamentalSolutions returns a subset of the given solutions, where
-// all variants that differ by rotation or reflection are counted as one solution.
+// all variants that differ by rotation or reflection are counted as a single
+// solution.
 func ReduceToFundamentalSolutions(solutions []Board) []Board {
 	var reducedSolutions []Board
 	for len(solutions) > 0 {
@@ -135,4 +144,15 @@ func (b Board) hasMatch(variants []Board) bool {
 		}
 	}
 	return false
+}
+
+func (b Board) isValid() bool {
+	checker := NewBoard(b.N)
+	for _, q := range b.Queens {
+		if !checker.IsSafe(q.X, q.Y) {
+			return false
+		}
+		checker.setQueen(q)
+	}
+	return true
 }

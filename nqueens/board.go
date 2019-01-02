@@ -1,15 +1,16 @@
 package nqueens
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 	"strings"
 )
 
 // position consists of an X and Y coordinate that represents a position on the chess board.
-type position struct {
-	X, Y int
-}
+type position struct{ X, Y int }
+
+func (p position) String() string { return fmt.Sprintf("(%d,%d)", p.X, p.Y) }
 
 // byY type implements the Sorter interface to enable sorting of positions.
 type byY []position
