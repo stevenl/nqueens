@@ -49,8 +49,8 @@ func (b Board) IsSafe(x, y int) bool {
 	switch {
 	case b.unsafeRows[y]:
 	case b.unsafeCols[x]:
-	case b.unsafeDiagUp[y - x + b.N]:
-	case b.unsafeDiagDn[y + x]:
+	case b.unsafeDiagUp[y-x+b.N]:
+	case b.unsafeDiagDn[y+x]:
 	default:
 		isSafe = true
 	}
@@ -61,8 +61,8 @@ func (b *Board) setQueen(q position) {
 	b.Queens = append(b.Queens, q)
 	b.unsafeRows[q.Y] = true
 	b.unsafeCols[q.X] = true
-	b.unsafeDiagUp[q.Y - q.X + b.N] = true
-	b.unsafeDiagDn[q.Y + q.X] = true
+	b.unsafeDiagUp[q.Y-q.X+b.N] = true
+	b.unsafeDiagDn[q.Y+q.X] = true
 }
 
 // SetQueen copyies the board and sets a queen at the given position.
