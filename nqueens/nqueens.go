@@ -54,12 +54,13 @@ func ReduceToFundamentalSolutions(solutions []Board) []Board {
 	for len(solutions) > 0 {
 		head := solutions[0]
 		tail := solutions[1:]
-		
+		variants := head.variants()
+
 		reducedSolutions = append(reducedSolutions, head)
 
 		var reduced []Board
 		for _, b := range tail {
-			if !head.IsEquivalent(b) {
+			if !b.hasMatch(variants) {
 				reduced = append(reduced, b)
 			}
 		}
@@ -103,5 +104,35 @@ func (b Board) IsEquivalent(b1 Board) bool {
 		b3 = b3.RotateClockwise()
 	}
 
+	return false
+}
+
+// Variants returns a list of Boards that are variants of the original board.
+// Variants can be the same or differ by rotating or mirroring the board.
+// The original board configuration is included in the list of variants.
+func (b Board) variants() []Board {
+	var variants []Board
+
+	// Rotate
+	for i := 0; i < 4; i++ {
+		variants = append(variants, b)
+		b = b.RotateClockwise()
+	}
+
+	// Mirror & rotate
+	b = b.Mirror()
+	for i := 0; i < 4; i++ {
+		variants = append(variants, b)
+		b = b.RotateClockwise()
+	}
+	return variants
+}
+
+func (b Board) hasMatch(variants []Board) bool {
+	for _, v := range variants {
+		if b.IsEqual(v) {
+			return true
+		}
+	}
 	return false
 }
