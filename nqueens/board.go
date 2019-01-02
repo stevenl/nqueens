@@ -55,48 +55,6 @@ func (b Board) IsSafe(x, y int) bool {
 	return isSafe
 }
 
-// String returns a string representation of the board.
-// This method fulfils the requirement of the "fmt.Stringer" interface.
-func (b Board) String() string {
-	buildMatrix := func(b Board) [][]int {
-		// Initialise empty matrix
-		matrix := make([][]int, b.N)
-		for y := range matrix {
-			matrix[y] = make([]int, b.N)
-		}
-
-		// Set the queens in the matrix
-		for _, q := range b.Queens {
-			matrix[q.Y][q.X] = 1
-		}
-		return matrix
-	}
-
-	sb := strings.Builder{}
-
-	// Top border
-	sb.WriteString(" -")
-	sb.WriteString(strings.Repeat("-", b.N*2))
-	sb.WriteString("\n")
-
-	matrix := buildMatrix(b)
-	for _, row := range matrix {
-		sb.WriteString("[ ")
-		for _, col := range row {
-			sb.WriteString(strconv.Itoa(col))
-			sb.WriteString(" ")
-		}
-		sb.WriteString("]\n")
-	}
-
-	// Bottom border
-	sb.WriteString(" -")
-	sb.WriteString(strings.Repeat("-", b.N*2))
-	sb.WriteString("\n")
-
-	return sb.String()
-}
-
 func (b *Board) setQueen(q position) {
 	b.Queens = append(b.Queens, q)
 	b.unsafeRows[q.Y] = true
@@ -153,4 +111,46 @@ func (b Board) RotateClockwise() Board {
 	}
 	sort.Sort(byY(rotated.Queens))
 	return rotated
+}
+
+// String returns a string representation of the board.
+// This method fulfils the requirement of the "fmt.Stringer" interface.
+func (b Board) String() string {
+	buildMatrix := func(b Board) [][]int {
+		// Initialise empty matrix
+		matrix := make([][]int, b.N)
+		for y := range matrix {
+			matrix[y] = make([]int, b.N)
+		}
+
+		// Set the queens in the matrix
+		for _, q := range b.Queens {
+			matrix[q.Y][q.X] = 1
+		}
+		return matrix
+	}
+
+	sb := strings.Builder{}
+
+	// Top border
+	sb.WriteString(" -")
+	sb.WriteString(strings.Repeat("-", b.N*2))
+	sb.WriteString("\n")
+
+	matrix := buildMatrix(b)
+	for _, row := range matrix {
+		sb.WriteString("[ ")
+		for _, col := range row {
+			sb.WriteString(strconv.Itoa(col))
+			sb.WriteString(" ")
+		}
+		sb.WriteString("]\n")
+	}
+
+	// Bottom border
+	sb.WriteString(" -")
+	sb.WriteString(strings.Repeat("-", b.N*2))
+	sb.WriteString("\n")
+
+	return sb.String()
 }
