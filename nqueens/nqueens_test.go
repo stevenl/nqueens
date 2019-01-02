@@ -59,10 +59,22 @@ func logSolutions(t *testing.T, solutions []Board) {
 	}
 }
 
-func BenchmarkGetAllSolutions(b *testing.B) {
-	n := 8
+func BenchmarkOverall(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		b := NewBoard(n)
-		_ = ReduceToFundamentalSolutions(GetAllSolutions(b))
+		_ = ReduceToFundamentalSolutions(GetAllSolutions(NewBoard(8)))
+	}
+}
+
+func BenchmarkGetAllSolutions(b *testing.B) {
+	board := NewBoard(8)
+	for i := 0; i < b.N; i++ {
+		_ = GetAllSolutions(board)
+	}
+}
+
+func BenchmarkReduceToFundamentalSolutions(b *testing.B) {
+	allSolutions := GetAllSolutions(NewBoard(8))
+	for i := 0; i < b.N; i++ {
+		_ = ReduceToFundamentalSolutions(allSolutions)
 	}
 }
